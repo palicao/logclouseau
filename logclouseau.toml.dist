@@ -1,0 +1,14 @@
+[channel.slack_general]
+type = "slack"
+api_token = "---"
+channel = "---"
+
+[channel.debug]
+type = "debug"
+
+[file.test]
+path = "./test.log"
+regexp = "21"
+channel = "slack_general"
+grace = { minutes = 2, seconds = 10 }
+message = "Something happened in the file test!"
