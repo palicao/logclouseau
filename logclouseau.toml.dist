@@ -8,7 +8,11 @@ type = "debug"
 
 [file.test]
 path = "./test.log"
-regexp = "21"
-channel = "slack_general"
+
+[alert.test]
+file = "test"
+regex = "1"
+channel = "debug"
 grace = { minutes = 2, seconds = 10 }
+min_occurrences = 3
 message = "Something happened in the file test!"
