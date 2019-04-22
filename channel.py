@@ -3,6 +3,8 @@ import logging
 
 from slackclient import SlackClient
 
+from utils import assert_dict_contains_keys
+
 
 class Channel(object, metaclass=abc.ABCMeta):
     """
@@ -17,16 +19,17 @@ class ChannelFactory(object):
     """
     Instantiates channels based on the "type". Currently only implemented "slack" and "debug"
     """
-    __instances = dict()
+    instances = dict()
 
     @classmethod
     def get_channel(cls, config: dict) -> Channel:
-        channel_type = config['type']
+        channel_type = config['type'] if 'type' in config else 'debug'
 
-        if channel_type in cls.__instances:
-            return cls.__instances[channel_type]
+        if channel_type in cls.instances:
+            return cls.instances[channel_type]
 
         if channel_type == 'slack':
+            assert_dict_contains_keys(config, {'api_token', 'channel'})
             client = SlackClient(config['api_token'])
             instance = SlackChannel(client, config['channel'])
         elif channel_type == 'debug':
@@ -34,26 +37,23 @@ class ChannelFactory(object):
         else:
             raise NotImplementedError(f'channel type "{channel_type}" is not implemented')
 
-        cls.__instances[channel_type] = instance
+        cls.instances[channel_type] = instance
         return instance
 
 
 class SlackChannel(Channel):
-    __channel: str
-    __client: SlackClient
-
     def __init__(self, client: SlackClient, channel: str):
-        self.__client = client
-        self.__channel = channel
+        self.client = client
+        self.channel = channel
 
     def alert(self, message: str, logline: str) -> None:
         try:
-            self.__send_message(f'Message: {message}\nLogline: {logline}')
+            self.__send_message(f'Message: {message}\nLine: {logline}')
         except:
-            logging.exception(f'unable to send message to channel {self.__channel}', exc_info=True)
+            logging.exception(f'unable to send message to channel {self.channel}', exc_info=True)
 
     def __send_message(self, message):
-        response = self.__client.api_call('chat.postMessage', channel=self.__channel, text=message)
+        response = self.client.api_call('chat.postMessage', channel=self.channel, text=message)
         if not response['ok']:
             error = response['error']
             raise RuntimeError(f'unable to send message to slack: {error}')
@@ -61,4 +61,4 @@ class SlackChannel(Channel):
 
 class DebugChannel(Channel):
     def alert(self, message: str, logline: str) -> None:
-        logging.info(f'Message: {message} - LogLine: {logline}')
+        logging.info(f'ALERT! Message: {message} - Line: {logline}')

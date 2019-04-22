@@ -6,13 +6,15 @@ channel = "---"
 [channel.debug]
 type = "debug"
 
-[file.test]
+[file.testfile]
 path = "./test.log"
+tokens = '{dow} {month} {dom} {h}:{m}:{s} {tz} {year}'
 
-[alert.test]
-file = "test"
-regex = "1"
+[alert.testalert]
+file = "testfile"
 channel = "debug"
+condition = "s > '50' and year == '2019'"
+identifier = "'ident' + s"
 grace = { minutes = 2, seconds = 10 }
-min_occurrences = 3
-message = "Something happened in the file test!"
+min_occurrences = 2
+message = "'A message with seconds ' + s + ' and year ' + year + ' arrived!'"

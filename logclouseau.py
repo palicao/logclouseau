@@ -8,40 +8,54 @@ import logging
 
 from alert import Alert
 import channel
+import utils
 
 channels = dict()
-files = dict()
+alerts = dict()
 
 
 def main() -> None:
     args = parse_args()
     config = load_config(args.config)
+
     setup_logging(args.log)
+    setup_channels(config)
+    setup_alerts(config)
+    evaluate_files(config)
 
-    for name, channel_config in config['channel'].items():
-        channels[name] = channel.ChannelFactory.get_channel(channel_config)
 
-    for name, file_config in config['file'].items():
-        files[name] = open(file_config['path'])
+def evaluate_files(config):
+    for file_name, file_config in config['file'].items():
+        regex = utils.tokens_to_pattern(file_config['tokens'])
+        with open(file_config['path']) as file:
+            for line in tailer.follow(file):
+                for alert in alerts[file_name].values():
+                    matches = re.match(regex, line)
+                    if matches:
+                        gd = matches.groupdict()
+                        alert.evaluate(gd, line)
 
-    for name, alert_config in config['alert'].items():
-        regex = re.compile(alert_config['regex'])
-        if alert_config['channel'] in channels:
-            ch = channels[alert_config['channel']]
-        else:
-            ch = channel.DebugChannel()
-        delta = alert_config['grace']
-        message = alert_config['message']
+
+def setup_alerts(config):
+    for alert_name, alert_config in config['alert'].items():
+        ch = alert_config.get('channel', 'debug')
+        ch = channels.get(ch, channel.DebugChannel())
+        delta = alert_config.get('grace', 0)
         grace = datetime.timedelta(**delta)
-        min_occurrences = alert_config['min_occurrences']
+        message = alert_config.get('message', f'Alert {alert_name}')
+        min_occurrences = alert_config.get('min_occurrences', 1)
+        condition = alert_config.get('condition', 'True')
+        identifier = alert_config.get('identifier', alert_name)
 
-        alert = Alert(name, regex, ch, grace, message, min_occurrences)
+        file = alert_config['file']
+        if file not in alerts:
+            alerts[file] = dict()
+        alerts[file][alert_name] = Alert(ch, condition, identifier, grace, min_occurrences, message)
 
-        file = files[alert_config['file']]
-        for line in tailer.follow(file):
-            alert.evaluate(line)
-            if regex.search(line):
-                alert.evaluate(line)
+
+def setup_channels(config):
+    for channel_name, channel_config in config['channel'].items():
+        channels[channel_name] = channel.ChannelFactory.get_channel(channel_config)
 
 
 def setup_logging(level: str) -> None:
@@ -61,8 +75,7 @@ def load_config(config_file: str) -> dict:
     Each one of them has its own format. The validation of the format is left at the consumer.
     """
     config = toml.load(config_file)
-    mandatory_keys = {'channel', 'file', 'alert'}
-    assert mandatory_keys.issubset(config.keys())
+    utils.assert_dict_contains_keys(config, {'channel', 'file', 'alert'})
     return config
 
 
