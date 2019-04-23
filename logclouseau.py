@@ -1,6 +1,7 @@
 import argparse
 import datetime
 import re
+from concurrent.futures.thread import ThreadPoolExecutor
 
 import tailer
 import toml
@@ -25,15 +26,25 @@ def main() -> None:
 
 
 def evaluate_files(config):
-    for file_name, file_config in config['file'].items():
-        regex = utils.tokens_to_pattern(file_config['tokens'])
-        with open(file_config['path']) as file:
-            for line in tailer.follow(file):
-                for alert in alerts[file_name].values():
-                    matches = re.match(regex, line)
-                    if matches:
-                        gd = matches.groupdict()
-                        alert.evaluate(gd, line)
+    """
+    Evaluates each file in a different thread
+    """
+    files = config['file']
+    executor = ThreadPoolExecutor(len(files))
+    with executor as thread:
+        thread.map(evaluate_file, files.items())
+
+
+def evaluate_file(file):
+    (file_name, file_config) = file
+    regex = utils.tokens_to_pattern(file_config['tokens'])
+    with open(file_config['path']) as file:
+        for line in tailer.follow(file):
+            for alert in alerts[file_name].values():
+                matches = re.match(regex, line)
+                if matches:
+                    gd = matches.groupdict()
+                    alert.evaluate(gd, line)
 
 
 def setup_alerts(config):

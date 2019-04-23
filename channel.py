@@ -19,14 +19,14 @@ class ChannelFactory(object):
     """
     Instantiates channels based on the "type". Currently only implemented "slack" and "debug"
     """
-    instances = dict()
+    _instances = dict()
 
     @classmethod
     def get_channel(cls, config: dict) -> Channel:
         channel_type = config['type'] if 'type' in config else 'debug'
 
-        if channel_type in cls.instances:
-            return cls.instances[channel_type]
+        if channel_type in cls._instances:
+            return cls._instances[channel_type]
 
         if channel_type == 'slack':
             assert_dict_contains_keys(config, {'api_token', 'channel'})
@@ -37,23 +37,23 @@ class ChannelFactory(object):
         else:
             raise NotImplementedError(f'channel type "{channel_type}" is not implemented')
 
-        cls.instances[channel_type] = instance
+        cls._instances[channel_type] = instance
         return instance
 
 
 class SlackChannel(Channel):
     def __init__(self, client: SlackClient, channel: str):
-        self.client = client
-        self.channel = channel
+        self._client = client
+        self._channel = channel
 
     def alert(self, message: str, logline: str) -> None:
         try:
             self.__send_message(f'Message: {message}\nLine: {logline}')
         except:
-            logging.exception(f'unable to send message to channel {self.channel}', exc_info=True)
+            logging.exception(f'unable to send message to channel {self._channel}', exc_info=True)
 
     def __send_message(self, message):
-        response = self.client.api_call('chat.postMessage', channel=self.channel, text=message)
+        response = self._client.api_call('chat.postMessage', channel=self._channel, text=message)
         if not response['ok']:
             error = response['error']
             raise RuntimeError(f'unable to send message to slack: {error}')
