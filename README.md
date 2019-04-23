@@ -1,6 +1,6 @@
-# LogClouseau
-
-![LogClouseau](./img/logo.png)
+<p align="center">
+    <img src="./img/logo.png" with="400" height="400" />
+</p>
 
 > LogClouseau inspects your logs, extracts information and sends alerts according to your conditions.
 
