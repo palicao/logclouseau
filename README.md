@@ -67,3 +67,8 @@ Each alerts has several properties:
 ## Logo
 
 Many thanks to [Ilaria Ranauro](https://www.instagram.com/ilaria.ranauro) for the amazing logo!
+
+## Todos
+
+- [ ] Persist (where? sqlite? redis?) the status of the alerts so we uphold the `min_occurrences` and `grace` statuses even in case of an application crash.
+- [ ] Write tests
