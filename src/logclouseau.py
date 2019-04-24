@@ -7,9 +7,8 @@ import tailer
 import toml
 import logging
 
-from alert import Alert
-import channel
-import utils
+from src.alert import Alert
+from src import channel, utils
 
 channels = dict()
 alerts = dict()
