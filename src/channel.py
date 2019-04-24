@@ -3,7 +3,7 @@ import logging
 
 from slackclient import SlackClient
 
-from utils import assert_dict_contains_keys
+from src.utils import assert_dict_contains_keys
 
 
 class Channel(object, metaclass=abc.ABCMeta):

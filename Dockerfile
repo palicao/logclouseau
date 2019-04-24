@@ -10,6 +10,6 @@ WORKDIR /logclouseau
 
 RUN pipenv install
 
-COPY . /logclouseau
+COPY src /logclouseau
 
 CMD ["pipenv", "run", "python", "logclouseau.py", "--config", "/logclouseau/logclouseau.toml"]

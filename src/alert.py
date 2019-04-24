@@ -1,7 +1,7 @@
 import logging
 from datetime import timedelta, datetime
 
-from channel import Channel
+from src.channel import Channel
 
 
 class Alert(object):
