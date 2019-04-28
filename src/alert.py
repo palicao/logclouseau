@@ -24,8 +24,8 @@ class Alert(object):
         """
         Sends an alert if it's not in the grace_time and if it happened at least min_occurrences
         """
-        ident = eval(self._identifier, {}, tokens)
-        msg = eval(self._message, {}, tokens)
+        ident = self._identifier.format(**tokens)
+        msg = self._message.format(**tokens)
         if ident not in self._occurrence:
             self._occurrence[ident] = 0
         self._occurrence[ident] += 1
