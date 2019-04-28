@@ -14,9 +14,9 @@ from src.channel import Channel
 
 
 class Logclouseau:
-    _channels = Dict[str, Channel]
-    _alerts = Dict[str, Alert]
-    _config = Dict[str, Any]
+    _channels: Dict[str, Channel] = dict()
+    _alerts: Dict[str, Alert] = dict()
+    _config: Dict[str, Any] = dict()
 
     def __init__(self, config_file, log_level):
         self._config = self.load_config(config_file)
