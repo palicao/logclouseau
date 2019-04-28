@@ -56,19 +56,20 @@ Each alerts has several properties:
 
 | property | description | default |
 |---|---|---|
-| file | Reference to a file definition (in the previous example it would be `"nginx_access_log"`) | - (no default) |
-| channel | Reference to a channel definition | `"debug"` (that's why it's a good practice to define at least a channel with that name) |
-| condition | String that gets `eval`uated by python in order to understand whether to send an alert or not. Internally it's possible to use the token previously defined as variables. For example, to receive an alert for every 404 returned to a given IP, the condition would be `"response_code = '404' and ip = '1.2.3.4'"`. Remember that all the variables are strings! | `"True"` (an alert is sent for every line) |
-| identifier | String that gets `eval`uated by python. Having different identifiers is useful to have different `min_occurrences` and `grace`. For example, if my identifier is `"'ident-' + ip"` and the grace period is `{hours = 1}` I won't send more than an alert per hour regarding the same IP | defaults to the alert name |
-| grace | Grace period definition: during that period after sending an alert, no second alert with the same identifier will be sent. It can be expressed by a table (dictionary) which might contain the properties: days, seconds, minutes, hours, weeks. | `{days = 0}` (no grace) |
-| min_occurrences | Number of times that an error has to occur before an alert is sent | `1` (alerts are immediately sent) |
-| message | The content of the alert message. Also this string gets `eval`uated by python, so remember to enclose it in quotes (e.g. `"'Alert!'"`) | `"'Alert! ' + alert_name"` |
+| `file | Reference to a file definition (in the previous example it would be `"nginx_access_log"`) | - (no default) |
+| `channel` | Reference to a channel definition | `"debug"` (that's why it's a good practice to define at least a channel with that name) |
+| `condition` | String that gets `eval`uated by python in order to understand whether to send an alert or not. Internally it's possible to use the token previously defined as variables. For example, to receive an alert for every 404 returned to a given IP, the condition would be `"response_code = '404' and ip = '1.2.3.4'"`. Remember that all the variables are strings! | `"True"` (an alert is sent for every line) |
+| `identifier` | String that gets `eval`uated by python. Having different identifiers is useful to have different `min_occurrences` and `grace`. For example, if my identifier is `"'ident-' + ip"` and the grace period is `{hours = 1}` I won't send more than an alert per hour regarding the same IP | defaults to the alert name |
+| `grace` | Grace period definition: during that period after sending an alert, no second alert with the same identifier will be sent. It can be expressed by a table (dictionary) which might contain the properties: days, seconds, minutes, hours, weeks. | `{days = 0}` (no grace) |
+| `min_occurrences` | Number of times that an error has to occur before an alert is sent | `1` (alerts are immediately sent) |
+| `message` | The content of the alert message. Also this string gets `eval`uated by python, so remember to enclose it in quotes (e.g. `"'Alert!'"`) | `"'Alert! ' + alert_name"` |
 
-## Logo
+## Acknowledegments
 
-Many thanks to [Ilaria Ranauro](https://www.instagram.com/ilaria.ranauro) for the amazing logo!
+Many thanks to [Ilaria Ranauro](https://www.instagram.com/ilaria.ranauro) for the amazing logo, and to [Michał Wachowski](https://github.com/potfur) for his precious "pythonic" suggestions.
 
 ## Todos
 
-- [ ] Persist (where? sqlite? redis?) the status of the alerts so we uphold the `min_occurrences` and `grace` statuses even in case of an application crash.
+- [ ] Persist (where? sqlite? redis?) the status of the alerts so we uphold the `min_occurrences` and `grace` statuses even in case of an application crash / restart
 - [ ] Write tests
+- [ ] Gracefully handle SIGINT and SIGTERM
