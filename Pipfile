@@ -9,6 +9,7 @@ verify_ssl = true
 toml = "*"
 slackclient = "*"
 tailer = "*"
+click = "*"
 
 [requires]
 python_version = "3.7"
