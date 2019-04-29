@@ -10,6 +10,7 @@ toml = "*"
 slackclient = "*"
 tailer = "*"
 click = "*"
+brabbel = "*"
 
 [requires]
 python_version = "3.7"

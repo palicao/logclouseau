@@ -2,6 +2,8 @@ import logging
 from datetime import timedelta, datetime
 from typing import Dict
 
+from brabbel import Expression
+
 from src.channel import Channel
 
 
@@ -10,7 +12,7 @@ class Alert:
                  grace: timedelta, min_occurrences: int,
                  message: str):
         self._channel = channel
-        self._condition = condition
+        self._condition = Expression(condition)
         self._identifier = identifier
         self._grace = grace
         self._min_occurrences = min_occurrences
@@ -19,7 +21,7 @@ class Alert:
         self._end_grace: Dict[str, datetime] = dict()
 
     def evaluate(self, tokens: dict, line: str) -> None:
-        if eval(self._condition, {}, tokens):
+        if self._condition.evaluate(tokens):
             self.__send_alert(tokens, line)
 
     def __send_alert(self, tokens: dict, line: str) -> None:
