@@ -61,7 +61,7 @@ class SlackChannel(Channel):
                 exc_info=True
             )
 
-    def __send_message(self, message):
+    def __send_message(self, message: str):
         response = self._client.api_call(
             'chat.postMessage', channel=self._channel, text=message
         )

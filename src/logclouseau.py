@@ -15,23 +15,23 @@ from src.channel import Channel
 
 class Logclouseau:
     _channels: Dict[str, Channel] = dict()
-    _alerts: Dict[str, Alert] = dict()
+    _alerts: Dict[str, Dict[str, Alert]] = dict()
     _config: Dict[str, Any] = dict()
 
-    def __init__(self, config_file, log_level):
+    def __init__(self, config_file: str, log_level: str) -> None:
         self._config = self.load_config(config_file)
         self.setup_logging(log_level)
 
     def investigate(self) -> None:
-        self.setup_channels(self._config)
-        self.setup_alerts(self._config)
-        self.evaluate_files(self._config)
+        self.setup_channels()
+        self.setup_alerts()
+        self.evaluate_files()
 
-    def evaluate_files(self, config):
+    def evaluate_files(self) -> None:
         """
         Evaluates each file in a different thread
         """
-        files = config['file']
+        files = self._config['file']
         executor = ThreadPoolExecutor(len(files))
         with executor as thread:
             thread.map(self.evaluate_file, files.items())
@@ -47,8 +47,8 @@ class Logclouseau:
                         gd = matches.groupdict()
                         alert.evaluate(gd, line)
 
-    def setup_alerts(self, config):
-        for alert_name, alert_config in config['alert'].items():
+    def setup_alerts(self) -> None:
+        for alert_name, alert_config in self._config['alert'].items():
             ch = alert_config.get('channel', 'debug')
             ch = self._channels.get(ch, channel.DebugChannel())
             delta = alert_config.get('grace', 0)
@@ -65,12 +65,13 @@ class Logclouseau:
                                                    grace, min_occurrences,
                                                    message)
 
-    def setup_channels(self, config):
-        for channel_name, channel_config in config['channel'].items():
+    def setup_channels(self) -> None:
+        for channel_name, channel_config in self._config['channel'].items():
             self._channels[channel_name] = \
                 channel.ChannelFactory.get_channel(channel_config)
 
-    def setup_logging(self, level: str) -> None:
+    @staticmethod
+    def setup_logging(level: str) -> None:
         """
         Sets up logging according to the command line parameter --log
         """
@@ -80,7 +81,8 @@ class Logclouseau:
         logging.basicConfig(level=numeric_level,
                             format='%(asctime)s %(levelname)s %(message)s')
 
-    def load_config(self, config_file: str) -> dict:
+    @staticmethod
+    def load_config(config_file: str) -> Dict[str, Any]:
         """
         Loads a config file from a toml file and asserts it's valid.
         In order to be valid, a config must have at least 3 keys:

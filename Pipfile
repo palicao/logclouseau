@@ -10,7 +10,7 @@ toml = "*"
 slackclient = "*"
 tailer = "*"
 click = "*"
-brabbel = "*"
+expressions = {git = "https://github.com/intelie/expressions"}
 
 [requires]
 python_version = "3.7"
