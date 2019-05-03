@@ -1,6 +1,6 @@
 import logging
 from datetime import timedelta, datetime
-from typing import Dict
+from typing import Dict, Any
 
 from src.channel import Channel
 
@@ -18,11 +18,11 @@ class Alert:
         self._occurrence: Dict[str, int] = dict()
         self._end_grace: Dict[str, datetime] = dict()
 
-    def evaluate(self, tokens: dict, line: str) -> None:
+    def evaluate(self, tokens: Dict[str, Any], line: str) -> None:
         if eval(self._condition, {}, tokens):
             self.__send_alert(tokens, line)
 
-    def __send_alert(self, tokens: dict, line: str) -> None:
+    def __send_alert(self, tokens: Dict[str, Any], line: str) -> None:
         """
         Sends an alert if it's not in the grace_time and if it happened at
         least min_occurrences
