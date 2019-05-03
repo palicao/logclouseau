@@ -1,6 +1,6 @@
 import abc
 import logging
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 
 from slackclient import SlackClient
 
@@ -24,7 +24,7 @@ class ChannelFactory:
     _instances: Dict[str, Channel] = dict()
 
     @classmethod
-    def get_channel(cls, config: dict) -> Channel:
+    def get_channel(cls, config: Dict[str, Any]) -> Channel:
         channel_type: str = config.get('type', 'debug')
 
         if channel_type in cls._instances:
@@ -50,7 +50,6 @@ class SlackChannel(Channel):
     def __init__(cls, client: SlackClient, channel: str, **kwargs):
         cls._client = client
         cls._channel = channel
-        super().__init__()
 
     def alert(self, message: str, logline: str) -> None:
         try:
@@ -61,7 +60,7 @@ class SlackChannel(Channel):
                 exc_info=True
             )
 
-    def __send_message(self, message):
+    def __send_message(self, message: str) -> None:
         response = self._client.api_call(
             'chat.postMessage', channel=self._channel, text=message
         )

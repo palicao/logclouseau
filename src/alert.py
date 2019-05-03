@@ -29,9 +29,12 @@ class Alert:
         """
         ident = eval(self._identifier, {}, tokens)
         msg = eval(self._message, {}, tokens)
-        if ident not in self._occurrence:
-            self._occurrence[ident] = 0
-        self._occurrence[ident] += 1
+
+        try:
+            self._occurrence[ident] += 1
+        except KeyError:
+            self._occurrence[ident] = 1
+
         if self._occurrence[ident] < self._min_occurrences:
             logging.debug(
                 f'skipping message "{msg}", line "{line}" '
