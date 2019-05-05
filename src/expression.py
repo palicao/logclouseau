@@ -9,15 +9,17 @@ class CompilerError(Exception):
 
 
 class TokensAwareExpressionCompiler(Compiler):
-    def compile_variable(self, tokens: Dict[str, Any], variable: Variable) \
-            -> Variable:
+    def compile_variable(
+            self, tokens: Dict[str, Any], variable: Variable
+    ) -> Variable:
         if variable.name not in tokens.keys():
             raise CompilerError(f'variable {variable} is not allowed')
         return variable
 
     @staticmethod
-    def fix_types(a: Any, b: Any, tokens: Dict[str, Any]) \
-            -> Tuple[Any, Any]:
+    def fix_types(
+            a: Any, b: Any, tokens: Dict[str, Any]
+    ) -> Tuple[Any, Any]:
         try:
             if isinstance(a, Variable) and isinstance(b, Variable):
                 return tokens[a.name], tokens[b.name]
@@ -32,14 +34,17 @@ class TokensAwareExpressionCompiler(Compiler):
             raise CompilerError(f'error: {err}')
 
     @staticmethod
-    def bitwise_operation(op: str, a: Any, b: Any, tokens: Dict[str, Any]) -> int:
+    def bitwise_operation(
+            op: str, a: Any, b: Any, tokens: Dict[str, Any]
+    ) -> int:
         try:
             if isinstance(a, Variable):
                 a = int(tokens[a.name])
             if isinstance(b, Variable):
                 b = int(tokens[b.name])
             if not isinstance(a, int) or not isinstance(b, int):
-                raise CompilerError('bitwise or is only allowed between integers')
+                raise CompilerError(
+                    'bitwise or is only allowed between integers')
             if op == '|':
                 return a | b
             return a & b
@@ -59,8 +64,13 @@ class TokensAwareExpressionCompiler(Compiler):
         except KeyError as err:
             raise CompilerError(f'error: {err}')
 
-    def compile_binary(self, tokens: Dict[str, Any], operator: str, op1: Any,
-                       op2: Any) -> Any:
+    def compile_binary(
+            self,
+            tokens: Dict[str, Any],
+            operator: str,
+            op1: Any,
+            op2: Any
+    ) -> Any:
         operations: Dict[str, Callable[[Any, Any], Any]] = {
             '+': (lambda a, b: a + b),
             '-': (lambda a, b: a - b),

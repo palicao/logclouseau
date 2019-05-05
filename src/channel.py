@@ -47,7 +47,7 @@ class ChannelFactory:
 
 
 class SlackChannel(Channel):
-    def __init__(cls, client: SlackClient, channel: str, **kwargs):
+    def __init__(cls, client: SlackClient, channel: str):
         cls._client = client
         cls._channel = channel
         super().__init__()
@@ -61,7 +61,7 @@ class SlackChannel(Channel):
                 exc_info=True
             )
 
-    def __send_message(self, message: str):
+    def __send_message(self, message: str) -> None:
         response = self._client.api_call(
             'chat.postMessage', channel=self._channel, text=message
         )

@@ -66,9 +66,10 @@ class Logclouseau:
                                                    message)
 
     def setup_channels(self) -> None:
-        for channel_name, channel_config in self._config['channel'].items():
-            self._channels[channel_name] = \
-                channel.ChannelFactory.get_channel(channel_config)
+        self._channels = {
+            channel_name: channel.ChannelFactory.get_channel(channel_config)
+            for channel_name, channel_config in self._config['channel'].items()
+        }
 
     @staticmethod
     def setup_logging(level: str) -> None:
