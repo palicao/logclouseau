@@ -12,7 +12,7 @@ from src.logclouseau import Logclouseau
               )
 @click.option('--log', default='debug',
               help='Logging level (defaults to debug)')
-def main(config, log):
+def main(config: str, log: str):
     Logclouseau(expanduser(config), log).investigate()
 
 

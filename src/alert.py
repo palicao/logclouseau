@@ -3,6 +3,7 @@ from datetime import timedelta, datetime
 from typing import Dict, Any
 
 from src.channel import Channel
+from src.expression import TokensAwareExpressionCompiler
 
 
 class Alert:
@@ -12,6 +13,7 @@ class Alert:
         self._channel = channel
         self._condition = condition
         self._identifier = identifier
+        self._compiler = TokensAwareExpressionCompiler()
         self._grace = grace
         self._min_occurrences = min_occurrences
         self._message = message
@@ -19,17 +21,20 @@ class Alert:
         self._end_grace: Dict[str, datetime] = dict()
 
     def evaluate(self, tokens: Dict[str, Any], line: str) -> None:
-        if eval(self._condition, {}, tokens):
-            self.__send_alert(tokens, line)
+        try:
+            compiled = self._compiler.compile(self._condition, tokens)
+            if compiled:
+                self.__send_alert(tokens, line)
+        except BaseException as ex:
+            logging.error(f'Error: {ex}')
 
     def __send_alert(self, tokens: Dict[str, Any], line: str) -> None:
         """
         Sends an alert if it's not in the grace_time and if it happened at
         least min_occurrences
         """
-        ident = eval(self._identifier, {}, tokens)
-        msg = eval(self._message, {}, tokens)
-
+        ident = self._identifier.format(**tokens)
+        msg = self._message.format(**tokens)
         try:
             self._occurrence[ident] += 1
         except KeyError:

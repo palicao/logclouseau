@@ -1,3 +1,5 @@
-toml==0.10.0
+Click==7.0
+-e git+https://github.com/palicao/expressions@079359ee8111769ca18ade25aad4de0133e1bfc0#egg=expressions
 slackclient==1.3.1
 tailer==0.4.1
+toml==0.10.0

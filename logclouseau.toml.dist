@@ -7,14 +7,14 @@ channel = "---"
 type = "debug"
 
 [file.testfile]
-path = "./test.log"
-tokens = '{dow} {month} {dom} {h}:{m}:{s} {tz} {year}'
+path = "/var/log/test1.log"
+tokens = '{file} {dow} {month} {dom} {h}:{m}:{s} {tz} {year}'
 
 [alert.testalert]
 file = "testfile"
 channel = "debug"
-condition = "s > '50' and year == '2019'"
-identifier = "'ident' + s"
+condition = "$s >= '50' and $year == '2019'"
+identifier = "ident1-{s}"
 grace = { minutes = 2, seconds = 10 }
 min_occurrences = 2
-message = "'A message with seconds ' + s + ' and year ' + year + ' arrived!'"
+message = "A message with seconds {s} and year {year} arrived!"

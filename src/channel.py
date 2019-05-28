@@ -47,7 +47,7 @@ class ChannelFactory:
 
 
 class SlackChannel(Channel):
-    def __init__(cls, client: SlackClient, channel: str, **kwargs):
+    def __init__(cls, client: SlackClient, channel: str):
         cls._client = client
         cls._channel = channel
 

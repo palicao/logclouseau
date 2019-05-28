@@ -1,3 +1,7 @@
 logclouseau.toml
 .idea
-__pycache__
+__pycache__/
+lib/
+bin/
+*.egg-info/
+.mypy_cache/
