@@ -67,9 +67,3 @@ Each alerts has several properties:
 ## Acknowledegments
 
 Many thanks to [Ilaria Ranauro](https://www.instagram.com/ilaria.ranauro) for the amazing logo, and to [Michał Wachowski](https://github.com/potfur) for his precious "pythonic" suggestions.
-
-## Todos
-
-- [ ] Persist (where? sqlite? redis?) the status of the alerts so we uphold the `min_occurrences` and `grace` statuses even in case of an application crash / restart
-- [ ] Write tests
-- [ ] Gracefully handle SIGINT and SIGTERM

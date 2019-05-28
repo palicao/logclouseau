@@ -45,9 +45,7 @@ class TokensAwareExpressionCompiler(Compiler):
             if not isinstance(a, int) or not isinstance(b, int):
                 raise CompilerError(
                     'bitwise or is only allowed between integers')
-            if op == '|':
-                return a | b
-            return a & b
+            return a | b if op == '|' else a & b
         except KeyError as err:
             raise CompilerError(f'error: {err}')
 

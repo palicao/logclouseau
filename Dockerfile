@@ -1,7 +1,9 @@
 FROM python:3.7-alpine
 
 RUN pip install pip-tools
-#RUN apk add build-base openssl-dev libffi-dev libxml2-dev libxslt-dev
+RUN apk update && \
+    apk upgrade && \
+    apk add --no-cache git gcc musl-dev libffi-dev
 
 COPY requirements.txt /logclouseau/requirements.txt
 
@@ -9,6 +11,9 @@ WORKDIR /logclouseau
 
 RUN pip-sync
 
-COPY src /logclouseau
+COPY . /logclouseau
+COPY logclouseau.toml.dist /root/.logclouseau/logclouseau.toml
 
-CMD ["python", "logclouseau.py", "--config", "/logclouseau/logclouseau.toml"]
+RUN python setup.py install
+
+CMD ["logclouseau"]

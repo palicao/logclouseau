@@ -25,6 +25,7 @@ setup(
         'slackclient',
         'tailer',
         'click',
+        'expressions @ git+https://github.com/palicao/expressions@079359ee8111769ca18ade25aad4de0133e1bfc0#egg=expressions'
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',

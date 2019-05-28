@@ -3,7 +3,7 @@ from datetime import timedelta, datetime
 from typing import Dict, Any
 
 from src.channel import Channel
-from src.expression import TokensAwareExpressionCompiler, CompilerError
+from src.expression import TokensAwareExpressionCompiler
 
 
 class Alert:
