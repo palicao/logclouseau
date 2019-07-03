@@ -56,7 +56,7 @@ Each alerts has several properties:
 
 | property | description | default |
 |---|---|---|
-| `file | Reference to a file definition (in the previous example it would be `"nginx_access_log"`) | - (no default) |
+| `file` | Reference to a file definition (in the previous example it would be `"nginx_access_log"`) | - (no default) |
 | `channel` | Reference to a channel definition | `"debug"` (that's why it's a good practice to define at least a channel with that name) |
 | `condition` | String that gets `eval`uated by python in order to understand whether to send an alert or not. Internally it's possible to use the token previously defined as variables. For example, to receive an alert for every 404 returned to a given IP, the condition would be `"response_code = '404' and ip = '1.2.3.4'"`. Remember that all the variables are strings! | `"True"` (an alert is sent for every line) |
 | `identifier` | String that gets `eval`uated by python. Having different identifiers is useful to have different `min_occurrences` and `grace`. For example, if my identifier is `"'ident-' + ip"` and the grace period is `{hours = 1}` I won't send more than an alert per hour regarding the same IP | defaults to the alert name |
